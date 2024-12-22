@@ -24,7 +24,7 @@ export const links: LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='en'>
+    <html lang='en' className='h-full'>
       <head>
         <meta charSet='utf-8' />
         <meta name='viewport' content='width=device-width, initial-scale=1' />
@@ -32,11 +32,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
-        <div className='flex justify-center bg-gray-100'>
-          <img src='/logo+text.png' alt='logoApp' />
+      <body className='h-full flex flex-col bg-gray-50'>
+        <div className='flex justify-center pb-4'>
+          <img src='/logo+text.png' alt='logoApp' sizes='100px' />
         </div>
-        {children}
+        <main className='flex-grow'>
+          <Outlet />
+        </main>
         <ScrollRestoration />
         <Scripts />
       </body>

@@ -3,13 +3,13 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { Form, useLoaderData } from '@remix-run/react'
 import CardApp from '~/components/custom/CardApp'
 import { PaginationApp } from '~/components/custom/PaginationApp'
 import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
 import { getPokemons } from '~/services'
 import { Pokemon, Pokemons } from '~/types'
-import { CapitalizeFirstLetter, getPokemonImageFromUrl } from '~/utils'
 
 export const meta: MetaFunction = () => {
   return [
@@ -20,10 +20,14 @@ export const meta: MetaFunction = () => {
 
 export const loader: LoaderFunction = async ({
   params,
+  request,
 }: LoaderFunctionArgs) => {
+  const url = new URL(request.url)
+  const search = url.searchParams.get('search')
+
+  console.log('search param: ', search)
   try {
     const data = await getPokemons()
-    console.log(data)
     return new Response(JSON.stringify(data), {
       headers: { 'Content-Type': 'application/json' },
       status: 200,
@@ -37,8 +41,22 @@ export default function Index() {
   const pokemons = data.results
 
   return (
-    <main className='min-h-screen h-full w-screen justify-center flex-col bg-gray-100'>
-      <div className='p-6 grid grid-cols-10 gap-8'>
+    <main className='h-full  w-screen gap-4 justify-between py-4 flex-col flex'>
+      <Form className='flex justify-center gap-2'>
+        <Input
+          type='text'
+          placeholder='Choose your pokemon...'
+          className='w-72'
+          name='search'
+        />
+        <Button
+          type='submit'
+          className='bg-[#ffcb00] text-[#064587] font-semibold'
+        >
+          Search
+        </Button>
+      </Form>
+      <div className='p-6 grid grid-cols-10 gap-12'>
         {pokemons.map((pokemon: Pokemon) => (
           <CardApp key={pokemon.name} pokemon={pokemon} />
         ))}
