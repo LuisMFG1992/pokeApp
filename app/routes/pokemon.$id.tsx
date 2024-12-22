@@ -1,6 +1,8 @@
 import { LoaderFunction, json } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
-import { Pokemon } from '~/types'
+import { Link, useLoaderData } from '@remix-run/react'
+import RadarChart from '~/components/custom/RadarChart'
+import { Button } from '~/components/ui/button'
+import { Ability, Pokemon, PokemonDetailsType, Stat, Type } from '~/types'
 import { CapitalizeFirstLetter, getPokemonImageFromUrl } from '~/utils'
 
 export const loader: LoaderFunction = async ({ params }) => {
@@ -11,6 +13,9 @@ export const loader: LoaderFunction = async ({ params }) => {
   }
   const data = await response.json()
 
+  // TODO: Sacar la historia de aqui https://pokeapi.co/api/v2/pokemon-species/${id}/
+  // TODO: Y ponerla en info
+
   const pokemonDetailsFormatted = {
     id: data.id,
     name: CapitalizeFirstLetter(data.name),
@@ -18,16 +23,19 @@ export const loader: LoaderFunction = async ({ params }) => {
     abilities: data.abilities.map((element: Ability) =>
       CapitalizeFirstLetter(element.ability.name)
     ),
+    info: data.flavor_text_entries,
     height: data.height / 10,
     weight: data.weight / 10,
-    stats: data.stats.map(
-      (element: Stat) =>
-        `${CapitalizeFirstLetter(element.stat.name)}: ${element.base_stat}`
-    ),
+    stats: data.stats.map((element: Stat) => [
+      CapitalizeFirstLetter(element.stat.name),
+      element.base_stat,
+    ]),
     types: data.types.map((element: Type) =>
       CapitalizeFirstLetter(element.type.name)
     ),
   }
+
+  console.log(pokemonDetailsFormatted)
 
   return new Response(JSON.stringify(pokemonDetailsFormatted), {
     headers: { 'Content-Type': 'application/json' },
@@ -35,51 +43,12 @@ export const loader: LoaderFunction = async ({ params }) => {
   })
 }
 
-type Ability = {
-  ability: {
-    name: string
-    url: string
-  }
-  is_hidden: boolean
-  slot: number
-}
-
-type Stat = {
-  base_stat: number
-  effort: number
-  stat: {
-    name: string
-    url: string
-  }
-}
-
-type Type = {
-  slot: number
-  type: {
-    name: string
-    url: string
-  }
-}
-
-type PokemonDetailsType = {
-  id: number
-  name: string
-  sprite: string
-  abilities: string[]
-  height: number
-  weight: number
-  stats: string[]
-  types: string[]
-}
-
 const PokemonDetails = () => {
   const pokemon: PokemonDetailsType = useLoaderData()
 
   return (
-    <div className='min-h-screen h-full w-screen grid grid-cols-[500px_1fr]'>
-      <div className='col-span-1 z-0'>
-        {/* <div className='relative w-[500px]'> */}
-        {/* <img src='/pokedex.png' alt='' className='w-[700px] z-10' /> */}
+    <div className='h-full w-screen grid grid-cols-3'>
+      <div className='col-span-1 z-0 flex justify-center flex-col'>
         <div className='relative flex justify-center items-center'>
           <div className='w-[300px] h-[450px] flex'>
             <img src='/pokedex-short.png' alt='' />
@@ -93,26 +62,46 @@ const PokemonDetails = () => {
           </div>
         </div>
       </div>
-      <div className='h-full bg-blue-100'>
-        <p>Number: {pokemon.id}</p>
-        <p>Name: {pokemon.name}</p>
-        <p>Height: {pokemon.height} m</p>
-        <p>Weight: {pokemon.weight} kg</p>
-        <div>
-          <p>Abilities:</p>
-          {pokemon.abilities.map((element: string, index: number) => (
-            <p key={index}>{element}</p>
-          ))}
-        </div>
-        <p>Stats:</p>
-        {pokemon.stats.map((element: string, idx: number) => (
-          <p key={idx}>{element}</p>
-        ))}
+      <div className='h-full  flex justify-evenly items-center col-span-2'>
+        <div className='flex flex-col gap-4 bg-blue-100'>
+          <Link to={'/'}>
+            <Button>Back to Pokemons list</Button>
+          </Link>
+          <p>Number: {pokemon.id}</p>
+          <p>Name: {pokemon.name}</p>
+          <p>Height: {pokemon.height} m</p>
+          <p>Weight: {pokemon.weight} kg</p>
+          <div>
+            <p>Abilities:</p>
+            <div className=' flex gap-4'>
+              {pokemon.abilities.map((element: string, index: number) => (
+                <p key={index}>{element}</p>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p>Stats:</p>
+            <div className=' flex gap-4'>
+              {pokemon.stats.map(([name, value], idx) => (
+                <p key={idx}>
+                  {name}: {value}
+                </p>
+              ))}
+            </div>
+          </div>
 
-        <p>Types:</p>
-        {pokemon.types.map((element: string, idx: number) => (
-          <p key={idx}>{element}</p>
-        ))}
+          <div>
+            <p>Types:</p>
+            <div className=' flex gap-4'>
+              {pokemon.types.map((element: string, idx: number) => (
+                <p key={idx}>{element}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className='w-96 '>
+          <RadarChart pokemon={pokemon} />
+        </div>
       </div>
     </div>
   )
