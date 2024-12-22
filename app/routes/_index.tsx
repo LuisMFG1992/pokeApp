@@ -8,7 +8,7 @@ import CardApp from '~/components/custom/CardApp'
 import { PaginationApp } from '~/components/custom/PaginationApp'
 import { Button } from '~/components/ui/button'
 import { getPokemons } from '~/services'
-import { Pokemon, Root } from '~/types'
+import { Pokemon, Pokemons } from '~/types'
 import { CapitalizeFirstLetter, getPokemonImageFromUrl } from '~/utils'
 
 export const meta: MetaFunction = () => {
@@ -33,14 +33,11 @@ export const loader: LoaderFunction = async ({
 }
 
 export default function Index() {
-  const data: Root = useLoaderData()
+  const data: Pokemons = useLoaderData()
   const pokemons = data.results
 
   return (
     <main className='min-h-screen h-full w-screen justify-center flex-col bg-gray-100'>
-      <div className='flex justify-center'>
-        <img src='/logo+text.png' alt='logoApp' />
-      </div>
       <div className='p-6 grid grid-cols-10 gap-8'>
         {pokemons.map((pokemon: Pokemon) => (
           <CardApp key={pokemon.name} pokemon={pokemon} />

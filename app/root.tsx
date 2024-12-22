@@ -33,6 +33,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <div className='flex justify-center bg-gray-100'>
+          <img src='/logo+text.png' alt='logoApp' />
+        </div>
         {children}
         <ScrollRestoration />
         <Scripts />

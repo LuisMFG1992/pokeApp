@@ -3,9 +3,12 @@ export type Pokemon = {
   url: string
 }
 
-export type Root = {
+export type Pokemons = {
   count: number
   next: string
   previous: any
   results: Pokemon[]
 }
+
+
+
