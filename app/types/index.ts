@@ -39,6 +39,7 @@ export type Type = {
 export type PokemonDetailsType = {
   id: number
   name: string
+  info: string
   sprite: string
   abilities: string[]
   height: number

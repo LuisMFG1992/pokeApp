@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react'
 import { Form } from '@remix-run/react'
 import { Pokemon } from '~/types'
 import {
@@ -5,31 +6,53 @@ import {
   getPokemonIdByUrl,
   getPokemonImageFromUrl,
 } from '~/utils'
+import { Skeleton } from '../ui/skeleton'
 
 type pokemonProps = {
   pokemon: Pokemon
+  pokeIndex: number
 }
 
-const CardApp = ({ pokemon }: pokemonProps) => {
+const CardApp = ({ pokemon, pokeIndex }: pokemonProps) => {
+  const [imageUrl, setImageUrl] = useState('/unknown.png')
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const loadImage = async () => {
+      const url = await getPokemonImageFromUrl(pokemon.url)
+      setImageUrl(url)
+      setIsLoading(false)
+    }
+
+    loadImage()
+  }, [pokemon.url])
+
   const id = getPokemonIdByUrl(pokemon.url)
 
   return (
-    <Form
-      action={`/pokemon/${id}`}
-      key={pokemon.name}
-      className='shadow-md p-2 w-40 flex flex-col items-center rounded-xl relative hover:scale-110 hover:brightness-90 transition-all ease-out'
-    >
-      <button type='submit'>
-        <div className='absolute left-2 top-2 bg-[#ffcb00] rounded-full px-2 text-[0.7rem] text-[#064587] font-bold'>
-          {id}
-        </div>
-        <img
-          src={getPokemonImageFromUrl(pokemon.url)}
-          alt={pokemon.name + 'image'}
-        />
-        <p>{CapitalizeFirstLetter(pokemon.name)}</p>
-      </button>
-    </Form>
+    <>
+      {isLoading ? (
+        <Skeleton className='h-[165px] w-[150px] rounded-lg' />
+      ) : (
+        <Form action={`/pokemon/${id}`} key={pokemon.name}>
+          <button type='submit'>
+            <div className='shadow-md p-2 w-36 flex flex-col items-center rounded-xl relative hover:scale-110 hover:brightness-90 transition-all ease-out'>
+              <div className='absolute left-2 top-2 bg-[#ffcb00] rounded-full px-2 text-[0.7rem] text-[#064587] font-bold'>
+                {pokeIndex}
+              </div>
+              <img
+                src={imageUrl}
+                alt={`${pokemon.name} image`}
+                className='size-32'
+              />
+              <p className='overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:1]'>
+                {CapitalizeFirstLetter(pokemon.name)}
+              </p>
+            </div>
+          </button>
+        </Form>
+      )}
+    </>
   )
 }
 

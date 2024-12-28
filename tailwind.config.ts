@@ -5,6 +5,10 @@ export default {
   content: ['./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
+      screens: {
+        sx: '500px',
+        xxl: '1600px',
+      },
       backgroundImage: {
         pokedexImg: "url('/pokedex.png')",
       },
