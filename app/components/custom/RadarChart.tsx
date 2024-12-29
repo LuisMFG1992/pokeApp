@@ -30,26 +30,18 @@ const RadarChart = ({ pokemon }: RadarChart) => {
       'HP',
       'Attack',
       'Defense',
-      'Special Attack',
-      'Special Defense',
+      'Special Att.',
+      'Special Def.',
       'Speed',
     ],
     datasets: [
       {
         label: pokemon.name,
-        // data: [50, 55, 40, 90, 50, 50],
         data: pokemon.stats.map((stat) => stat[1]),
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderColor: 'rgba(255, 99, 132, 1)',
         borderWidth: 1,
       },
-      //   {
-      //     label: 'Bulbasaur',
-      //     data: [45, 49, 49, 45, 65, 65],
-      //     backgroundColor: 'rgba(54, 162, 235, 0.2)',
-      //     borderColor: 'rgba(54, 162, 235, 1)',
-      //     borderWidth: 1,
-      //   },
     ],
   }
 
