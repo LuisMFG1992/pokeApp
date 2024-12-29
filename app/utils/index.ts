@@ -1,10 +1,39 @@
+import { Pokemons } from '~/types'
+
 export const getPokemonIdByUrl = (url: string) => {
   const parts = url.split('/')
   const id = parts[parts.length - 2]
   return parseInt(id, 10)
 }
+
 export const getPokemonImageFromUrl = async (url: string): Promise<string> => {
   const id = getPokemonIdByUrl(url)
+  const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
+
+  try {
+    const res = await fetch(imageUrl)
+    if (res.ok) {
+      return imageUrl
+    } else {
+      return '/unknown.png'
+    }
+  } catch (error) {
+    console.error('Error fetching image:', error)
+    return '/unknown.png'
+  }
+}
+
+export const getPokemonIdByUrlSprite = (url: string) => {
+  const lastSlashIndex = url.lastIndexOf('/')
+  const lastDotIndex = url.lastIndexOf('.')
+
+  return url.substring(lastSlashIndex + 1, lastDotIndex)
+}
+
+export const getPokemonImageFromUrlSprite = async (
+  url: string
+): Promise<string> => {
+  const id = getPokemonIdByUrlSprite(url)
   const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
 
   try {
@@ -60,4 +89,23 @@ export async function isImage(url: string) {
     console.error('Error: ', error)
     return false
   }
+}
+
+export const getFilteredPokemonsByName = (
+  pokemons: Pokemons,
+  searchText: string | null
+) => {
+  const pokemonList = pokemons.results
+
+  if (!searchText || searchText.trim() === '') {
+    return pokemonList
+  }
+
+  const normalizedSearchText = searchText.trim().toLowerCase()
+
+  const filteredPokemonList = pokemonList.filter((pokemon) =>
+    pokemon.name.toLowerCase().startsWith(normalizedSearchText)
+  )
+
+  return filteredPokemonList
 }

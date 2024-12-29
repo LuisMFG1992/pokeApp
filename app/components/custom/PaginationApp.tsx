@@ -26,12 +26,19 @@ export function PaginationApp({ totalPokemons }: PaginationAppProps) {
 
   const visiblePages = getVisiblePages(currentPage, totalPages)
 
+  const createPaginationLink = (page: number) => {
+    const newSearchParams = new URLSearchParams(searchParams)
+    newSearchParams.set('page', String(page))
+    return `?${newSearchParams.toString()}`
+  }
+  createPaginationLink(1)
+
   return (
     <Pagination>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            to={`?page=${prePage}`}
+            to={createPaginationLink(prePage)}
             className={
               currentPage === 1 ? 'pointer-events-none opacity-50' : ''
             }
@@ -40,7 +47,7 @@ export function PaginationApp({ totalPokemons }: PaginationAppProps) {
 
         <PaginationItem className='border bg-white shadow-sm rounded-md'>
           <PaginationLink
-            to={`?page=1`}
+            to={createPaginationLink(1)}
             className={currentPage === 1 ? 'bg-[#ffcb00] text-[#064587]' : ''}
           >
             1
@@ -56,7 +63,7 @@ export function PaginationApp({ totalPokemons }: PaginationAppProps) {
         {visiblePages.map((page) => (
           <PaginationItem key={page}>
             <PaginationLink
-              to={`?page=${page}`}
+              to={createPaginationLink(page)}
               className={
                 currentPage === page
                   ? 'bg-[#ffcb00] text-[#064587] hover:bg-[#ffcb00] hover:text-[#064587] '
@@ -77,7 +84,7 @@ export function PaginationApp({ totalPokemons }: PaginationAppProps) {
 
         <PaginationItem>
           <PaginationLink
-            to={`?page=${totalPages}`}
+            to={createPaginationLink(totalPages)}
             className={
               currentPage === totalPages
                 ? 'bg-[#ffcb00] text-[#064587]'
@@ -90,7 +97,7 @@ export function PaginationApp({ totalPokemons }: PaginationAppProps) {
 
         <PaginationItem>
           <PaginationNext
-            to={`?page=${nextPage}`}
+            to={createPaginationLink(nextPage)}
             className={
               currentPage === totalPages ? 'pointer-events-none opacity-50' : ''
             }

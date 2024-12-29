@@ -37,9 +37,6 @@ const CardApp = ({ pokemon, pokeIndex }: pokemonProps) => {
         <Form action={`/pokemon/${id}`} key={pokemon.name}>
           <button type='submit'>
             <div className='shadow-md p-2 w-36 flex flex-col items-center rounded-xl relative hover:scale-110 hover:brightness-90 transition-all ease-out'>
-              <div className='absolute left-2 top-2 bg-[#ffcb00] rounded-full px-2 text-[0.7rem] text-[#064587] font-bold'>
-                {pokeIndex}
-              </div>
               <img
                 src={imageUrl}
                 alt={`${pokemon.name} image`}

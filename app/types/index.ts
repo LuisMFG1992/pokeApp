@@ -1,3 +1,5 @@
+export type MainRequest = { data: Pokemons; fullPokemonList: Pokemons }
+
 export type Pokemon = {
   name: string
   url: string
@@ -46,4 +48,5 @@ export type PokemonDetailsType = {
   weight: number
   stats: string[]
   types: string[]
+  order: number
 }

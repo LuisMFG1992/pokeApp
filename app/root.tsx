@@ -32,11 +32,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className='h-full flex flex-col bg-gray-50'>
-        <div className='flex justify-center pb-4'>
-          <img src='/logo+text.png' alt='logoApp' sizes='100px' />
+      <body className='min-h-full flex flex-col bg-gray-50'>
+        <div className='flex justify-center pb-4 h-[15vh]'>
+          <div className='size-64'>
+            <img src='/logo+text.png' alt='logoApp' />
+          </div>
         </div>
-        <main className='flex-grow'>
+        <main className='flex-grow h-[80vh]'>
           <Outlet />
         </main>
         <ScrollRestoration />

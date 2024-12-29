@@ -4,13 +4,17 @@ import RadarChart from '~/components/custom/RadarChart'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Ability, Pokemon, PokemonDetailsType, Stat, Type } from '~/types'
-import { CapitalizeFirstLetter, getPokemonImageFromUrl } from '~/utils'
+import {
+  CapitalizeFirstLetter,
+  getPokemonImageFromUrl,
+  getPokemonImageFromUrlSprite,
+} from '~/utils'
 
 import { IoMdArrowBack } from 'react-icons/io'
+import { useEffect, useState } from 'react'
 
 export const loader: LoaderFunction = async ({ params }) => {
   const { id } = params
-  console.log(id)
   const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
   if (!response.ok) {
     throw new Response('Not Found', { status: 404 })
@@ -30,6 +34,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 
   const pokemonDetailsFormatted = {
     id: data.id,
+    order: data.order,
     name: CapitalizeFirstLetter(data.name),
     sprite: data.sprites.front_default,
     abilities: data.abilities.map((element: Ability) =>
@@ -56,6 +61,18 @@ export const loader: LoaderFunction = async ({ params }) => {
 const PokemonDetails = () => {
   const pokemon: PokemonDetailsType = useLoaderData()
   const navigate = useNavigate()
+  const [imageUrl, setImageUrl] = useState('/unknown.png')
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const loadImage = async () => {
+      const url = await getPokemonImageFromUrlSprite(pokemon.sprite)
+      setImageUrl(url)
+      setIsLoading(false)
+    }
+
+    loadImage()
+  }, [])
 
   return (
     <div className='h-full w-screen grid grid-cols-3'>
@@ -73,7 +90,7 @@ const PokemonDetails = () => {
           </div>
           <div className='w-[300px] h-[450px] absolute'>
             <img
-              src={pokemon.sprite}
+              src={imageUrl}
               alt={`${pokemon.name} image`}
               className='size-[120px] absolute top-[31.5%] left-[26%] z-20'
             />
@@ -82,6 +99,13 @@ const PokemonDetails = () => {
       </div>
       <div className='h-full flex items-center col-span-2'>
         <div className='flex flex-col gap-4 pr-10'>
+          <div>
+            <p></p>
+            <label>Number</label>
+            <div className='border border-gray-400 rounded-lg p-2 bg-white'>
+              {pokemon.order}
+            </div>
+          </div>
           <div>
             <label>Info</label>
             <div className='border border-gray-400 rounded-lg p-2 bg-white'>
@@ -112,7 +136,10 @@ const PokemonDetails = () => {
             <label>Abilities</label>
             <div className=' flex gap-4'>
               {pokemon.abilities.map((element: string, index: number) => (
-                <Badge className='p-2 bg-red-700' key={index}>
+                <Badge
+                  className='p-2 bg-red-700 hover:bg-[#ffcb00] hover:text-[#064587]'
+                  key={index}
+                >
                   {element}
                 </Badge>
               ))}
@@ -123,7 +150,10 @@ const PokemonDetails = () => {
             <p>Types</p>
             <div className=' flex gap-4'>
               {pokemon.types.map((element: string, idx: number) => (
-                <Badge className='p-2 bg-red-700' key={idx}>
+                <Badge
+                  className='p-2 bg-red-700 hover:bg-[#ffcb00] hover:text-[#064587]'
+                  key={idx}
+                >
                   {element}
                 </Badge>
               ))}
