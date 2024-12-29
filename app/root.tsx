@@ -32,7 +32,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className='min-h-full flex flex-col bg-gray-50'>
+      <body className='min-h-full flex flex-col'>
         <div className='flex justify-center pb-4 h-[15vh]'>
           <div className='size-64'>
             <img src='/logo+text.png' alt='logoApp' />

@@ -94,11 +94,11 @@ export async function isImage(url: string) {
 export const getFilteredPokemonsByName = (
   pokemons: Pokemons,
   searchText: string | null
-) => {
+): Pokemons => {
   const pokemonList = pokemons.results
 
   if (!searchText || searchText.trim() === '') {
-    return pokemonList
+    return pokemons
   }
 
   const normalizedSearchText = searchText.trim().toLowerCase()
@@ -107,5 +107,5 @@ export const getFilteredPokemonsByName = (
     pokemon.name.toLowerCase().startsWith(normalizedSearchText)
   )
 
-  return filteredPokemonList
+  return { ...pokemons, results: filteredPokemonList }
 }

@@ -1,4 +1,8 @@
-export type MainRequest = { data: Pokemons; fullPokemonList: Pokemons }
+export type MainRequest = {
+  data: Pokemons
+  fullPokemonList: Pokemons
+  search: string
+}
 
 export type Pokemon = {
   name: string

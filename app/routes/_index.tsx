@@ -33,6 +33,7 @@ export const loader: LoaderFunction = async ({
 }: LoaderFunctionArgs) => {
   const url = new URL(request.url)
   const page = Number(url.searchParams.get('page'))
+  const search = url.searchParams.get('search')
 
   if (!page) {
     url.searchParams.set('page', '1')
@@ -48,6 +49,7 @@ export const loader: LoaderFunction = async ({
       JSON.stringify({
         data: limitedPokemonList,
         fullPokemonList: fullPokemonList,
+        search: search,
       }),
       {
         headers: { 'Content-Type': 'application/json' },
@@ -59,43 +61,46 @@ export const loader: LoaderFunction = async ({
 }
 
 export default function Index() {
+  const fullData: MainRequest = useLoaderData()
+  const { data, fullPokemonList, search } = fullData
+
   const size = useResize()
   const [searchParams] = useSearchParams()
+
   const [pokemonCount, setPokemonCount] = useState<number>(0)
-  const [filteredPokemons, setFilteredPokemons] = useState<Pokemon[]>([])
+  const [pokemons, setPokemons] = useState<Pokemon[]>(data.results)
 
   const currentPage = Number(searchParams.get('page'))
   const searchText = searchParams.get('search')
 
-  const fullData: MainRequest = useLoaderData()
-  const { data, fullPokemonList } = fullData
-  console.log(data)
-  console.log(fullPokemonList)
-  console.log({ pokemonCount })
+  useEffect(() => {
+    setPokemonCount(data.count)
+  }, [data])
 
   useEffect(() => {
     if (searchText) {
       const filtered = getFilteredPokemonsByName(fullPokemonList, searchText)
-      setFilteredPokemons(filtered)
-      setPokemonCount(filtered.length)
+      setPokemonCount(filtered.results.length)
+      setPokemons(
+        filtered.results.splice(
+          (currentPage - 1) * REQUEST_POKEMON_LIMIT,
+          currentPage * REQUEST_POKEMON_LIMIT
+        )
+      )
+    } else {
+      setPokemons(data.results)
     }
-  }, [searchText, fullPokemonList])
-
-  let pokemons = filteredPokemons
-  if (searchText === null || searchText === '') pokemons = data.results
-
-  useEffect(() => {
-    setPokemonCount(pokemons.length)
-  }, [pokemons])
+  }, [searchText, fullPokemonList, currentPage])
 
   return (
     <main className='h-full w-full py-4 flex-col flex gap-4 justify-between'>
       <Form className='flex justify-center gap-2 px-2'>
         <Input
           type='text'
-          placeholder='Choose your pokemon...'
+          placeholder='Search by name...'
           className='w-full max-w-72'
           name='search'
+          defaultValue={search || ''}
         />
         <Button
           type='submit'
@@ -105,7 +110,7 @@ export default function Index() {
         </Button>
       </Form>
 
-      {size[0] <= 500 && <PaginationMobileApp totalPokemons={data.count} />}
+      {size[0] <= 500 && <PaginationMobileApp totalPokemons={pokemonCount} />}
 
       <div className='p-2 grid grid-cols-2 sx:grid-cols-3 sm:grid-cols-4 place-items-center md:grid-cols-5 xl:grid-cols-8 xxl:grid-cols-10 gap-4'>
         {pokemons.map((pokemon: Pokemon, index: number) => {
@@ -123,7 +128,7 @@ export default function Index() {
       </div>
 
       {size[0] <= 500 ? (
-        <PaginationMobileApp totalPokemons={data.count} />
+        <PaginationMobileApp totalPokemons={pokemonCount} />
       ) : (
         <PaginationApp totalPokemons={pokemonCount} />
       )}
