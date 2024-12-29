@@ -75,13 +75,13 @@ const PokemonDetails = () => {
   }, [])
 
   return (
-    <div className='h-full w-screen grid grid-cols-3'>
+    <div className='min-h-screen w-screen grid grid-cols-1 lg:grid-cols-3'>
       <Button
         onClick={() => navigate(-1)}
-        className='absolute top-10 left-10 bg-[#ffcb00] text-[#064587] hover:bg-[#ffcb00] hover:text-[#064587] hover:brightness-95 font-semibold'
+        className='absolute top-10 left-2 md:left-10 bg-[#ffcb00] text-[#064587] hover:bg-[#ffcb00] hover:text-[#064587] hover:brightness-95 font-semibold'
       >
         <IoMdArrowBack />
-        Back to pokemon list
+        <span className='hidden md:block'>Back to pokemon list</span>
       </Button>
       <div className='col-span-1 z-0 flex justify-center flex-col'>
         <div className='relative flex justify-center items-center'>
@@ -97,8 +97,8 @@ const PokemonDetails = () => {
           </div>
         </div>
       </div>
-      <div className='h-full flex items-center col-span-2'>
-        <div className='flex flex-col gap-4 pr-10'>
+      <div className='h-full flex items-center col-span-1 lg:col-span-2 flex-col lg:flex-row'>
+        <div className='flex flex-col gap-4 p-3 lg:pr-10'>
           <div>
             <p></p>
             <label>Number</label>
@@ -160,7 +160,7 @@ const PokemonDetails = () => {
             </div>
           </div>
         </div>
-        <div className='w-[400px]'>
+        <div className='w-[250px] sm:w-[350px] lg:w-[400px]'>
           <RadarChart pokemon={pokemon} />
         </div>
       </div>
